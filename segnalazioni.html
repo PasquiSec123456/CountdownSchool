@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Segnalazioni</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #333;
+            color: white;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            background: #ff4757;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Invia una segnalazione</h2>
+        
+        <!-- Campo per il nome -->
+        <input type="text" id="name" placeholder="Inserisci il tuo nome" />
+        
+        <!-- Campo per i contatti -->
+        <input type="email" id="contacts" placeholder="Inserisci il tuo indirizzo email" />
+        
+        <!-- Campo per il tipo di segnalazione -->
+        <select id="reportType" style="width: 100%; padding: 10px; border-radius: 5px;">
+            <option value="">Seleziona un tipo di segnalazione</option>
+            <option value="Problema">Problema</option>
+            <option value="Suggerimento">Suggerimento</option>
+            <option value="Errore">Errore</option>
+        </select>
+
+        <!-- Campo per la segnalazione -->
+        <textarea id="message" placeholder="Descrivi la tua segnalazione..."></textarea>
+
+        <!-- Campo per la data -->
+        <input type="text" id="date" placeholder="Inserisci la data (GG/MM/AAAA)" />
+
+        <button onclick="sendReport()">Invia</button>
+    </div>
+
+    <script>
+        function sendReport() {
+            const name = document.getElementById("name").value;
+            const contacts = document.getElementById("contacts").value;
+            const message = document.getElementById("message").value;
+            const reportType = document.getElementById("reportType").value;
+            const date = document.getElementById("date").value;
+
+            // Verifica che tutti i campi siano compilati
+            if (!name || !contacts || !message || !reportType || !date) {
+                alert("Per favore, compila tutti i campi!");
+                return;
+            }
+
+            // Crea il messaggio strutturato
+            const formattedMessage = `
+Nome: ${name}
+Contatti: ${contacts}
+Tipo di Segnalazione: ${reportType}
+Segnalazione: ${message}
+Data: ${date}
+`;
+
+            // Invio del messaggio al webhook
+            fetch("https://discord.com/api/webhooks/1339744421805297694/W4Qt6PEzYKHvIk_hCYVSExSE3wKCRVbeOLkD6QqZDNtoI5SrCIJrbROXajbKfjQPNjTe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: formattedMessage })
+            }).then(response => {
+                if (response.ok) {
+                    alert("Segnalazione inviata con successo!");
+                    document.getElementById("name").value = "";
+                    document.getElementById("contacts").value = "";
+                    document.getElementById("message").value = "";
+                    document.getElementById("reportType").value = "";
+                    document.getElementById("date").value = "";
+                } else {
+                    alert("Errore nell'invio della segnalazione.");
+                }
+            }).catch(error => {
+                console.error("Errore:", error);
+                alert("Errore di connessione.");
+            });
+        }
+    </script>
+</body>
+</html>
